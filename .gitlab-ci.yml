@@ -46,7 +46,6 @@ stages:
 workflow:
   rules:
     - if: $CI_COMMIT_TAG
-    - if: $CI_PIPELINE_SOURCE == "push"
     - if: $CI_PIPELINE_SOURCE == "web"
     - if: $CI_PIPELINE_SOURCE == "api"
     - if: $CI_PIPELINE_SOURCE == "trigger"
@@ -55,17 +54,27 @@ default:
   image: quay.io/buildah/stable
 
 variables:
-  # Container registry (override via CI/CD Variables or manual pipeline trigger)
-  REGISTRY: "ghcr.io"
-  IMAGE_NAME: "network_ee_4"
-  # EE directory and file name
-  EE_DIR: "."
-  EE_FILE_NAME: "network_ee_5.yml"
-  # Base image age thresholds (in days) - informational only, never blocks the build
-  IMAGE_WARN_AGE: "40"
-  IMAGE_FAIL_AGE: "80"
-  # Set to "true" when triggering manually to skip base image validation
-  SKIP_BASE_IMAGE_VALIDATION: "false"
+  REGISTRY:
+    value: "ghcr.io"
+    description: "Container registry"
+  IMAGE_NAME:
+    value: "network_ee_4"
+    description: "Container image name"
+  EE_DIR:
+    value: "."
+    description: "Directory containing the EE files (relative to repo root)"
+  EE_FILE_NAME:
+    value: "network_ee_5.yml"
+    description: "EE definition file name"
+  SKIP_BASE_IMAGE_VALIDATION:
+    value: "false"
+    description: "Skip base image validation (set to 'true' to skip)"
+  IMAGE_WARN_AGE:
+    value: "40"
+    description: "Base image age warning threshold (days)"
+  IMAGE_FAIL_AGE:
+    value: "80"
+    description: "Base image age failure threshold (days)"
 
 # ============================================================================
 # Validation Stage
