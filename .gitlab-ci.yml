@@ -1,3 +1,26 @@
+spec:
+  inputs:
+    registry:
+      default: "ghcr.io"
+      description: "Container registry"
+      type: string
+    image_name:
+      default: "network_ee_4"
+      description: "Container image name"
+      type: string
+    ee_dir:
+      default: "."
+      description: "Directory containing the EE files (relative to repo root)"
+      type: string
+    ee_file_name:
+      default: "network_ee_5.yml"
+      description: "EE definition file name"
+      type: string
+    skip_base_image_validation:
+      default: "false"
+      description: "Skip base image validation"
+      type: string
+
 ---
 # Execution Environment Build and Publish Pipeline (GitLab CI/CD)
 # Features:
@@ -46,6 +69,7 @@ stages:
 workflow:
   rules:
     - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "push"
     - if: $CI_PIPELINE_SOURCE == "web"
     - if: $CI_PIPELINE_SOURCE == "api"
     - if: $CI_PIPELINE_SOURCE == "trigger"
@@ -54,27 +78,13 @@ default:
   image: quay.io/buildah/stable
 
 variables:
-  REGISTRY:
-    value: "ghcr.io"
-    description: "Container registry"
-  IMAGE_NAME:
-    value: "network_ee_4"
-    description: "Container image name"
-  EE_DIR:
-    value: "."
-    description: "Directory containing the EE files (relative to repo root)"
-  EE_FILE_NAME:
-    value: "network_ee_5.yml"
-    description: "EE definition file name"
-  SKIP_BASE_IMAGE_VALIDATION:
-    value: "false"
-    description: "Skip base image validation (set to 'true' to skip)"
-  IMAGE_WARN_AGE:
-    value: "40"
-    description: "Base image age warning threshold (days)"
-  IMAGE_FAIL_AGE:
-    value: "80"
-    description: "Base image age failure threshold (days)"
+  REGISTRY: $[[ inputs.registry ]]
+  IMAGE_NAME: $[[ inputs.image_name ]]
+  EE_DIR: $[[ inputs.ee_dir ]]
+  EE_FILE_NAME: $[[ inputs.ee_file_name ]]
+  SKIP_BASE_IMAGE_VALIDATION: $[[ inputs.skip_base_image_validation ]]
+  IMAGE_WARN_AGE: "40"
+  IMAGE_FAIL_AGE: "80"
 
 # ============================================================================
 # Validation Stage
